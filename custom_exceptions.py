@@ -1,0 +1,2 @@
+class EarthquakeNotFoundException(Exception):
+    pass
