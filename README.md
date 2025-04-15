@@ -10,4 +10,4 @@ A Python application that fetches real-time earthquake data from the USGS API, a
 - Simple analytics (e.g., strongest quake, count by region)
 - Alert system for significant earthquakes
 - Unit-tested core logic and components
-- Visual map plotting using `folium` or `matplotlib`
+- Visual map plotting using `matplotlib`
