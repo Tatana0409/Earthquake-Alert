@@ -211,21 +211,56 @@ else:
     # User selects a place from available earthquake locations
     available_places = df["Place"].dropna().unique().tolist()  # Remove NaN values
 
-    # Extract text after "of" but keep locations that don't contain "of"
+    # Extract text after "of", but keep locations without "of"
     split_places = [
-    place.split("of", 1)[1].strip() if "of" in place else place
-    for place in available_places
+        place.split("of", 1)[1].strip() if "of" in place else place
+        for place in available_places
     ]
+
     # Ensure there are places to choose from
-    if split_places:
-        default_place = random.choice(split_places)  # Select a random place as default
-    else:
-        default_place = "All"  # Fallback in case the list is empty
+    if "selected_place" not in st.session_state:
+        st.session_state["selected_place"] = random.choice(split_places) if split_places else "All"  # Fallback in case the list is empty
 
-    selected_place = st.selectbox("Select Location:", [default_place] + split_places)
+     # Dropdown for selecting location (default is the first randomly chosen place)
+    default_index = split_places.index(st.session_state["selected_place"]) if st.session_state["selected_place"] in split_places else 0
 
-    data = earthquake_instance.filter_by_place(selected_place)
+    selected_place = st.selectbox(
+        "Select Location:",
+        ["All"] + split_places,
+        index=(split_places.index(st.session_state["selected_place"]) + 1 if st.session_state[
+                                                                                 "selected_place"] in split_places else 0),
+        key="place_selector"  # Assign a unique key for proper state tracking
+    )
+
+    # Update session state when user makes a new selection
+    if selected_place != st.session_state["selected_place"]:
+        st.session_state["selected_place"] = selected_place
+
+    # Apply filtering
+    data = earthquake_instance.filter_by_place(st.session_state["selected_place"])
     df_place = client.convert_to_dataframe(data)
+
+
+
+    # # User selects a place from available earthquake locations
+    # available_places = df["Place"].dropna().unique().tolist()  # Remove NaN values
+    #
+    # # Extract text after "of" but keep locations that don't contain "of"
+    # split_places = [
+    # place.split("of", 1)[1].strip() if "of" in place else place
+    # for place in available_places
+    # ]
+    # # Ensure there are places to choose from
+    # if split_places:
+    #     default_place = random.choice(split_places)  # Select a random place as default
+    # else:
+    #     default_place = "All"  # Fallback in case the list is empty
+    #
+    #
+    # selected_place = st.selectbox("Select Location:", [default_place] + split_places)
+    #
+    # data = earthquake_instance.filter_by_place(selected_place)
+    # df_place = client.convert_to_dataframe(data)
 
     # Handle case where no earthquakes match the filter
     if df_place.empty:
@@ -277,7 +312,7 @@ else:
     # Display updated histogram
         st.subheader(f"Earthquake Magnitude Distribution (≥ {selected_magnitude}) from {start_date} to {end_date}")
         fig3, ax = plt.subplots()
-        ax.hist(df_filtered["Magnitude"], bins=15, edgecolor="skyblue", color="skyblue")
+        ax.hist(df_filtered["Magnitude"], bins=20, edgecolor="blue", color="skyblue")
         ax.set_xlabel("Magnitude")
         ax.set_ylabel("Frequency")
         ax.set_title("Filtered Earthquake Magnitude Distribution")
