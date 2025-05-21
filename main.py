@@ -137,12 +137,12 @@ elif section == "map":
         m = folium.Map(location=[df["Latitude"].mean(), df["Longitude"].mean()], zoom_start=5)
 
     # Add markers for each earthquake
-    for _, row in df.iterrows():
-        folium.Marker(
-        location=[row["Latitude"], row["Longitude"]],
-        popup=f"{row['Place']} | Magnitude: {row['Magnitude']}",
-        icon=folium.Icon(color="red" if row["Magnitude"] > 5 else "orange")
-        ).add_to(m)
+        for _, row in df.iterrows():
+            folium.Marker(
+            location=[row["Latitude"], row["Longitude"]],
+            popup=f"{row['Place']} | Magnitude: {row['Magnitude']}",
+            icon=folium.Icon(color="red" if row["Magnitude"] > 5 else "orange")
+            ).add_to(m)
 
     # Display the interactive map in Streamlit
         st_folium(m)  # Only initializes once
