@@ -9,7 +9,7 @@ from streamlit_folium import st_folium
 import matplotlib.ticker as ticker
 import pandas as pd
 from earthquake import Earthquake
-
+from custom_exceptions import EarthquakeNotFoundException
 
 # Initialize API client
 client = EarthquakeApiClient(EarthquakeApiClient.api_url)
@@ -34,7 +34,7 @@ if st.sidebar.button("Data Summary"):
     st.query_params["section"] = "data"
 if st.sidebar.button("Map Visualization"):
     st.query_params["section"] = "map"
-if st.sidebar.button("Top 10"):
+if st.sidebar.button("Top 10 Places"):
     st.query_params["section"] = "top"
 if st.sidebar.button("Save Data"):
     st.query_params["section"] = "save"
@@ -45,11 +45,9 @@ if st.sidebar.button("Reports"):
 if section == "home":
     st.subheader("👋 Hello!")
 
-
-
-    st.markdown("""<style>.stApp { background-color: #FAEBD7; }.css-1d391kg { color: blue; }</style>""",
-                unsafe_allow_html=True
-                )
+    # st.markdown("""<style>.stApp { background-color: #FAEBD7; }.css-1d391kg { color: blue; }</style>""",
+    #             unsafe_allow_html=True
+    #             )
 
     st.title("Welcome to my first Python project :snake: ")
     st.markdown(
@@ -300,25 +298,36 @@ else:
     end_date = st.date_input("Select End Date", min_value=min_date, max_value=max_date, value=max_date)
 
     # Apply magnitude and date filtering
-    filtered_data = earthquake_instance.filter_by_magnitude(selected_magnitude)
-    df_filtered = client.convert_to_dataframe(filtered_data)
-    df_filtered["Date"] = pd.to_datetime(df_filtered["Time"], unit='ms').dt.date
-    df_filtered = df_filtered[(df_filtered["Date"] >= start_date) & (df_filtered["Date"] <= end_date)]
+    #filtered_data = earthquake_instance.filter_by_magnitude(selected_magnitude)
+    try:
+        filtered_data = earthquake_instance.filter_by_magnitude(selected_magnitude)
 
-    # Ensure filtered dataset isn't empty
-    if df_filtered.empty:
-        st.warning("No earthquake data available for the selected filters.")
-    else:
-    # Display updated histogram
-        st.subheader(f"Earthquake Magnitude Distribution (≥ {selected_magnitude}) from {start_date} to {end_date}")
-        fig3, ax = plt.subplots()
-        ax.hist(df_filtered["Magnitude"], bins=20, edgecolor="blue", color="skyblue")
-        ax.set_xlabel("Magnitude")
-        ax.set_ylabel("Frequency")
-        ax.set_title("Filtered Earthquake Magnitude Distribution")
-        st.pyplot(fig3)
+        if filtered_data:
+            st.success(f"✅ Found {len(filtered_data)} earthquakes with magnitude ≥ {selected_magnitude}")
+            #st.dataframe(filtered_data)  # Display filtered data
 
-    st.write(f"Showing earthquakes from {start_date} to {end_date}")
+            df_filtered = client.convert_to_dataframe(filtered_data)
+            df_filtered["Date"] = pd.to_datetime(df_filtered["Time"], unit='ms').dt.date
+            df_filtered = df_filtered[(df_filtered["Date"] >= start_date) & (df_filtered["Date"] <= end_date)]
+
+            # Ensure filtered dataset isn't empty
+            if df_filtered.empty:
+                st.warning("No earthquake data available for the selected filters.")
+            else:
+                # Display updated histogram
+                st.subheader(
+                    f"Earthquake Magnitude Distribution (≥ {selected_magnitude}) from {start_date} to {end_date}")
+                fig3, ax = plt.subplots()
+                ax.hist(df_filtered["Magnitude"], bins=20, edgecolor="blue", color="skyblue")
+                ax.set_xlabel("Magnitude")
+                ax.set_ylabel("Frequency")
+                ax.set_title("Filtered Earthquake Magnitude Distribution")
+                st.pyplot(fig3)
+
+            st.write(f"Showing earthquakes from {start_date} to {end_date}")
+    except EarthquakeNotFoundException as e:
+        st.error(f"🚨 {e}")  # Show the error message in Streamlit UI
+
 
 
 

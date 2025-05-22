@@ -35,7 +35,7 @@ time.sleep(2)
 
 try:
     # open the app in native window
-    webview.create_window("My Streamlit Desktop App", "http://localhost:8501", width=1000, height=700)
+    webview.create_window("My First Python Desktop App", "http://localhost:8501", width=1000, height=700)
     webview.start()
 finally:
     print("Shutting down Streamlit server...")
