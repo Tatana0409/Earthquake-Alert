@@ -34,7 +34,7 @@ if st.sidebar.button("Data Summary"):
     st.query_params["section"] = "data"
 if st.sidebar.button("Map Visualization"):
     st.query_params["section"] = "map"
-if st.sidebar.button("Top 10 Places"):
+if st.sidebar.button("Top Earthquake Locations"):
     st.query_params["section"] = "top"
 if st.sidebar.button("Save Data"):
     st.query_params["section"] = "save"
@@ -62,6 +62,7 @@ if section == "home":
            - Filter by magnitude, location, or time
            - Save and earthquake data locally as .csv
            - Simple analytics (e.g., strongest quake, count by region) 
+           - Alert system for significant earthquakes
            - Unit-tested core logic and components
            - Visual map plotting using `matplotlib`
 
@@ -161,22 +162,22 @@ elif section == "data":
 
 
 elif section == "top":
-    st.subheader("Strongest Earthquakes in last 7 days")
+    st.subheader("The Strongest Earthquakes in last 7 days")
 
     # Top 10 places with strongest magnitude
     # Select top 10 strongest earthquakes by magnitude
     df_top_magnitude = df.nlargest(10, "Magnitude")
 
     # Extract relevant data
-    top_places = df_top_magnitude[["Place", "Magnitude"]].sort_values(by="Magnitude", ascending=True)
+    top_places = df_top_magnitude[["Place", "Magnitude"]].sort_values(by="Magnitude", ascending=False)
 
     # Create horizontal bar chart
-    st.subheader("Top 10 Places with Strongest Earthquakes")
+    st.subheader("Places with The Strongest Earthquakes in last week")
     fig1, ax = plt.subplots(figsize=(10, 6))
     ax.barh(top_places["Place"], top_places["Magnitude"], color="firebrick")
     ax.set_xlabel("Magnitude")
     ax.set_ylabel("Place")
-    ax.set_title("Top 10 Strongest Earthquake Locations")
+    ax.set_title("The Strongest Earthquake Locations")
     ax.invert_yaxis()  # Ensures strongest is at the top
     ax.bar_label(ax.containers[0], fmt="%.1f")  # Adds magnitude labels
 
