@@ -56,23 +56,8 @@ class EarthquakeApiClient:
             })
 
         return pd.DataFrame(data)
-    # @staticmethod
-    # def convert_to_dataframe(filtered_data):
-    #     data = []
-    #     for feature in filtered_data:
-    #         properties = feature["properties"]
-    #         geometry = feature["geometry"]
-    #         data.append({
-    #             "Magnitude": properties["mag"],
-    #             "Place": properties["place"],
-    #             "Time": properties["time"],
-    #             "Alert": properties["alert"],
-    #             "ID": properties["ids"],
-    #             "Coordinates": geometry["coordinates"],
-    #             "Latitude": geometry["coordinates"][1],  # Extract latitude
-    #             "Longitude": geometry["coordinates"][0],  # Extract longitude
-    #         })
-    #     return pd.DataFrame(data)
+
+
 
 # client = EarthquakeApiClient(EarthquakeApiClient.api_url)
 # all_data = client.get_all_data()

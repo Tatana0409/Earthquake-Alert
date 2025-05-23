@@ -41,7 +41,7 @@ class Earthquakes(EarthquakeApiClient):
             raise EarthquakeNotFoundException(f"No earthquakes found with alert.")
         return filtered
 
-# #data = Earthquakes.filter_by_magnitude(EarthquakeApiClient.convert_to_dataframe(EarthquakeApiClient, filtered_data), 4.1)
+#data = Earthquakes.filter_by_magnitude(EarthquakeApiClient.convert_to_dataframe(EarthquakeApiClient, filtered_data), 4.1)
 # client = EarthquakeApiClient(EarthquakeApiClient.api_url)
 # all_data = client.get_all_data()
 # filtered_data = client.filter_by_type("earthquake")

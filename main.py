@@ -164,7 +164,7 @@ elif section == "data":
 elif section == "top":
     st.subheader("The Strongest Earthquakes in last 7 days")
 
-    # Top 10 places with strongest magnitude
+    # Top 10 places with the strongest magnitude
     # Select top 10 strongest earthquakes by magnitude
     df_top_magnitude = df.nlargest(10, "Magnitude")
 
@@ -239,28 +239,6 @@ else:
     data = earthquake_instance.filter_by_place(st.session_state["selected_place"])
     df_place = client.convert_to_dataframe(data)
 
-
-
-    # # User selects a place from available earthquake locations
-    # available_places = df["Place"].dropna().unique().tolist()  # Remove NaN values
-    #
-    # # Extract text after "of" but keep locations that don't contain "of"
-    # split_places = [
-    # place.split("of", 1)[1].strip() if "of" in place else place
-    # for place in available_places
-    # ]
-    # # Ensure there are places to choose from
-    # if split_places:
-    #     default_place = random.choice(split_places)  # Select a random place as default
-    # else:
-    #     default_place = "All"  # Fallback in case the list is empty
-    #
-    #
-    # selected_place = st.selectbox("Select Location:", [default_place] + split_places)
-    #
-    # data = earthquake_instance.filter_by_place(selected_place)
-    # df_place = client.convert_to_dataframe(data)
-
     # Handle case where no earthquakes match the filter
     if df_place.empty:
         st.warning("No earthquakes found for the selected location.")
@@ -287,7 +265,7 @@ else:
     unsafe_allow_html=True
     )
 
-    # User selects a minimum magnitude
+    # User selects magnitude
     selected_magnitude = st.slider("Select Minimum Magnitude:", min_value=0.0, max_value=10.0, value=4.5, step=0.1)
 
     # Convert timestamp to readable date format
@@ -299,12 +277,11 @@ else:
     end_date = st.date_input("Select End Date", min_value=min_date, max_value=max_date, value=max_date)
 
     # Apply magnitude and date filtering
-    #filtered_data = earthquake_instance.filter_by_magnitude(selected_magnitude)
     try:
         filtered_data = earthquake_instance.filter_by_magnitude(selected_magnitude)
 
         if filtered_data:
-            st.success(f"✅ Found {len(filtered_data)} earthquakes with magnitude ≥ {selected_magnitude}")
+            st.success(f"Found {len(filtered_data)} earthquakes with magnitude ≥ {selected_magnitude}")
             #st.dataframe(filtered_data)  # Display filtered data
 
             df_filtered = client.convert_to_dataframe(filtered_data)
@@ -327,7 +304,7 @@ else:
 
             st.write(f"Showing earthquakes from {start_date} to {end_date}")
     except EarthquakeNotFoundException as e:
-        st.error(f"🚨 {e}")  # Show the error message in Streamlit UI
+        st.error(f" {e}")  # Show the error message in Streamlit UI
 
 
 
